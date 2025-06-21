@@ -5,7 +5,7 @@ from src.repositories.external_funds_repo import ExternalFundsRepo
 from src.repositories.equity_reference_repo import EquityReferenceRepo
 
 
-class ReportService:
+class ReportGenerator:
 
     def __init__(
             self,

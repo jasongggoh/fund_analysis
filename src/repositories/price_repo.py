@@ -3,35 +3,16 @@ import pandas as pd
 import os
 import logging
 
-from typing import Callable, List
+from typing import List
 
 from src.utils.common import PROJECT_ROOT
+from src.utils.database_utils import transaction
 
-
-def transaction(connection: sqlite3.Connection) -> Callable:
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-
-            cur = connection.cursor()
-            cur.execute("BEGIN TRANSACTION")
-            try:
-                result = func(*args, cursor=cur, **kwargs)
-                connection.commit()
-                return result
-            except Exception:
-                logging.exception("Error occurred in transaction.")
-                connection.rollback()
-            finally:
-                cur.close()
-
-        return wrapper
-
-    return decorator
 
 class PriceRepo:
     def __init__(self):
-        self.db_name = ":memory:"
-        self.conn = sqlite3.connect(self.db_name)
+        self.connection_string = ":memory:"
+        self.conn = sqlite3.connect(self.connection_string)
         self.date_cols=[]
 
         self.initialise_data()
@@ -69,10 +50,10 @@ class PriceRepo:
             return pd.DataFrame()
 
     def fetch_all(self):
-        pass
+        raise NotImplementedError("Not implemented yet")
 
     def fetch_all_as_df(self):
-        raise NotImplementedError("not implemented")
+        raise NotImplementedError("Not implemented yet")
 
     def select_all_data(self, table_name: str) -> List[dict]:
         query = f"select * from '{table_name}'"

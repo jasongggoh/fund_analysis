@@ -3,11 +3,11 @@ import pandas as pd
 import pytest
 from pandas._testing import assert_frame_equal
 
-from src.services.report_service import ReportService
+from src.services.report_service import ReportGenerator
 
 @pytest.fixture
 def report_service(mock_ex_funds_repo, mock_eq_ref_repo, mock_eq_price_repo):
-    return ReportService(
+    return ReportGenerator(
         ex_funds_repo=mock_ex_funds_repo,
         eq_ref_repo=mock_eq_ref_repo,
         eq_price_repo=mock_eq_price_repo

@@ -9,7 +9,7 @@ from src.models.equity_price import EquityPrice
 from src.models.external_fund import ExternalFund
 from src.utils.file_handler import FileHandler
 from src.models.file_mapping_config import FileMappingConfigs, FileMapping
-from src.services.report_service import ReportService
+from src.services.report_service import ReportGenerator
 from src.repositories.external_funds_repo import ExternalFundsRepo
 from src.repositories.equity_price_repo import EquityPriceRepo
 from src.repositories.equity_reference_repo import EquityReferenceRepo
@@ -37,7 +37,7 @@ def mock_price_repo():
 
 @pytest.fixture
 def mock_file_service(mock_ex_funds_repo, mock_eq_price_repo, mock_eq_ref_repo):
-    return ReportService(
+    return ReportGenerator(
         ex_funds_repo=mock_ex_funds_repo,
         eq_ref_repo=mock_eq_ref_repo,
         eq_price_repo=mock_eq_price_repo
