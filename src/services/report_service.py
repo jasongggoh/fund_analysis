@@ -23,7 +23,7 @@ class ReportGenerator:
         if fund_df.empty:
             raise RuntimeError("Funds data is not available")
 
-        price_df = self.eq_price_repo.fetch_all_as_df()
+        price_df = self.eq_price_repo.fetch_all()
 
         if price_df.empty:
             raise RuntimeError("Price data is not available")
@@ -73,6 +73,7 @@ class ReportGenerator:
 
         #sort for readability
         best_perf_fund_by_month.sort_values(["data_date"])
+        print(best_perf_fund_by_month.to_string())
 
         return best_perf_fund_by_month
 

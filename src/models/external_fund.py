@@ -1,15 +1,23 @@
-import datetime
+import pandas as pd
 
-from pydantic import BaseModel
+external_fund_schema = {
+    "financial_type": {"type": pd.StringDtype(), "nullable": True},
+    "symbol": {"type": pd.StringDtype(), "nullable": True},
+    "security_name": {"type": pd.StringDtype(), "nullable": True},
+    "sedol": {"type": pd.StringDtype(), "nullable": True},
+    "price": {"type": pd.Float64Dtype(), "nullable": True},
+    "quantity": {"type": pd.Float64Dtype(), "nullable": True},
+    "realised_pnl": {"type": pd.Float64Dtype(), "nullable": True},
+    "market_value": {"type": pd.Float64Dtype(), "nullable": True},
+    "fund_name": {"type": pd.StringDtype(), "nullable": False},
+    "data_date": {"type": "datetime64[ns]", "nullable": False},
+}
 
-class ExternalFund(BaseModel):
-    financial_type: str | None
-    symbol: str | None
-    security_name: str | None
-    sedol: str | None
-    price: float | None
-    quantity: float | None
-    realised_pnl: float | None
-    market_value: float | None
-    fund_name: str
-    data_date: datetime.date
+col_rename_dict = {
+    "financial type": "financial_type",
+    "security name": "security_name",
+    "realised p/l": "realised_pnl",
+    "market value": "market_value",
+    "fund name": "fund_name",
+    "data date": "data_date",
+}

@@ -1,9 +1,14 @@
-from pydantic import BaseModel
+import pandas as pd
 
-class EquityReference(BaseModel):
-    symbol: str | None
-    country: str | None
-    security_name: str | None
-    sector: str | None
-    industry: str | None
-    currency: str | None
+equity_reference_schema = {
+    "symbol": {"type": pd.StringDtype(), "nullable": True},
+    "country": {"type": pd.StringDtype(), "nullable": True},
+    "security_name": {"type": pd.StringDtype(), "nullable": True},
+    "sector": {"type": pd.StringDtype(), "nullable": True},
+    "industry": {"type": pd.StringDtype(), "nullable": True},
+    "currency": {"type": pd.StringDtype(), "nullable": True},
+}
+
+col_rename_dict = {
+    "security name": "security_name",
+}

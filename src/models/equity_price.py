@@ -1,16 +1,12 @@
-import datetime
-from pydantic import BaseModel, field_validator
+import pandas as pd
 
+equity_price_schema = {
+    "reference_date": {"type": "datetime64[ns]", "nullable": False},
+    "symbol": {"type": pd.StringDtype(), "nullable": False},
+    "reference_price": {"type": pd.Float64Dtype(), "nullable": False},
+}
 
-class EquityPrice(BaseModel):
-    reference_date: datetime.date
-    symbol: str
-    reference_price: float
-
-    @field_validator("reference_date", mode="before") # noqa
-    # pycharm type checking issue - field validator already returns a class method
-    @classmethod
-    def parse_date(cls, v: str) -> datetime.date:
-        if isinstance(v, str):
-            return datetime.datetime.strptime(v, "%m/%d/%Y").date()
-        raise ValueError(f"Incorrect date format: {str(v)}")
+col_rename_dict = {
+    "datetime": "reference_date",
+    "price": "reference_price"
+}

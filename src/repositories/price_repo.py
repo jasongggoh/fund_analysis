@@ -3,17 +3,18 @@ import pandas as pd
 import os
 import logging
 
-from typing import List
 
-from src.utils.common import PROJECT_ROOT
-from src.utils.database_utils import transaction
-
+from src.utils.common import PROJECT_ROOT, parse_date_cols
+from src.utils.database_utils import transaction, validate_schema
 
 class PriceRepo:
     def __init__(self):
         self.connection_string = ":memory:"
         self.conn = sqlite3.connect(self.connection_string)
         self.date_cols=[]
+        self.schema = None
+        self.table_name = None
+        self.col_rename_dict = None
 
         self.initialise_data()
 
@@ -27,42 +28,31 @@ class PriceRepo:
             sql_script = sql_file.read()
             ingest_script(sql=sql_script)
 
-    def fetch_as_df(self, query) -> pd.DataFrame:
+    def fetch(self, query: str) -> pd.DataFrame:
         cur = self.conn.cursor()
-        results = None
-        columns = []
         try:
             cur.execute(query)
             results = cur.fetchall()
             columns = [col[0].lower() for col in cur.description]
+            df = pd.DataFrame(results, columns=columns)
+
+            if self.col_rename_dict:
+                df = df.rename(columns=self.col_rename_dict)
+            return df
         except Exception:
             logging.exception("Error occurred when fetching data")
             raise
         finally:
             cur.close()
 
-            if results:
-                return pd.DataFrame(
-                    results,
-                    columns=columns
-                )
-
-            return pd.DataFrame()
-
-    def fetch_all(self):
-        raise NotImplementedError("Not implemented yet")
-
-    def fetch_all_as_df(self):
-        raise NotImplementedError("Not implemented yet")
-
-    def select_all_data(self, table_name: str) -> List[dict]:
-        query = f"select * from '{table_name}'"
-        df = self.fetch_as_df(query)
+    def fetch_all(self) -> pd.DataFrame:
+        query = f"SELECT * FROM '{self.table_name}'"
+        df = self.fetch(query)
 
         if df.empty:
-            return []
+            raise RuntimeError("No data fetched from DB with table '{table_name}'.")
 
-        # convert pd.NaN to None first before parsing
-        df = df.where(pd.notnull(df), None)
+        df = validate_schema(df, schema=self.schema)
+        df = parse_date_cols(df, self.date_cols)
 
-        return df.to_dict("records")
+        return df

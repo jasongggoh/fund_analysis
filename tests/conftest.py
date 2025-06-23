@@ -5,8 +5,6 @@ import pandas as pd
 import pytest
 import sqlite3
 
-from src.models.equity_price import EquityPrice
-from src.models.external_fund import ExternalFund
 from src.utils.file_handler import FileHandler
 from src.models.file_mapping_config import FileMappingConfigs, FileMapping
 from src.services.report_service import ReportGenerator
@@ -101,32 +99,20 @@ def mock_cursor():
 
 @pytest.fixture
 def mock_equities():
-    return [
-        ExternalFund(
-            financial_type="Equities",
-            symbol="APL",
-            security_name="mock Applebead",
-            sedol="sedol1",
-            price=1.1,
-            quantity=1.1,
-            realised_pnl=2.1,
-            market_value=1.11,
-            fund_name="Applebead",
-            data_date=datetime(2022, 5, 31).date()
-            ),
-        ExternalFund(
-            financial_type="Equities",
-            symbol="BTA",
-            security_name="mock Beta",
-            sedol="sedol2",
-            price=2.1,
-            quantity=2.2,
-            realised_pnl=2.2,
-            market_value=2.22,
-            fund_name="Beta",
-            data_date=datetime(2022, 5, 31).date()
-        ),
-    ]
+    return pd.DataFrame(
+        {
+            "financial_type": ["Equities", "Equities"],
+            "symbol": ["APL", "BTA"],
+            "security_name": ["mock Applebead", "mock Beta"],
+            "sedol": ["sedol1", "sedol2"],
+            "price": [1.1, 2.1],
+            "quantity": [1.1, 2.2],
+            "realised_pnl": [2.1, 2.2],
+            "market_value": [1.11, 2.22],
+            "fund_name": ["Applebead", "Beta"],
+            "data_date": [datetime(2022, 5, 31).date(), datetime(2022, 5, 31).date()]
+        }
+    )
 
 @pytest.fixture
 def mock_empty_list():
@@ -146,4 +132,4 @@ def mock_eq_price():
             "reference_price": 3.1
         }
     ]
-    return [EquityPrice(**item) for item in data]
+    return pd.DataFrame(data)

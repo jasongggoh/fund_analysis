@@ -15,7 +15,7 @@ def report_service(mock_ex_funds_repo, mock_eq_ref_repo, mock_eq_price_repo):
 
 def test_get_reconcile_equities_report(report_service, mock_ex_funds_repo, mock_eq_price_repo, mock_ex_funds_df, mock_eq_price_df):
     mock_ex_funds_repo.fetch_all_equities_as_df.return_value = mock_ex_funds_df
-    mock_eq_price_repo.fetch_all_as_df.return_value = mock_eq_price_df
+    mock_eq_price_repo.fetch_all.return_value = mock_eq_price_df
 
     result = report_service.get_recon_equities_report()
 

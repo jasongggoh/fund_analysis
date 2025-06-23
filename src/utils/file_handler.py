@@ -42,5 +42,5 @@ class FileHandler:
         return pd.concat(dfs).rename(columns=lambda x: x.lower()) if len(dfs) != 0 else pd.DataFrame()
 
     @staticmethod
-    def export_report_as_excel(directory: os.path, file_name: str, df: pd.DataFrame) -> None:
+    def     export_report_as_excel(directory: os.path, file_name: str, df: pd.DataFrame) -> None:
         df.to_excel(os.path.join(directory, file_name), index=False)

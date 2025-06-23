@@ -17,10 +17,10 @@ from src.repositories.price_repo import PriceRepo
     (
         [],
         [],
-        pd.DataFrame()
+        pd.DataFrame(columns=[]), # pandas special handling where there are no data and no columns
     )
 ])
-def test_fetch_as_df(mock_data, mock_description, expected_df, mock_connection, mock_cursor):
+def test_fetch(mock_data, mock_description, expected_df, mock_connection, mock_cursor):
     mock_data = mock_data
     mock_description = mock_description
     mock_cursor.fetchall.return_value = mock_data
@@ -30,43 +30,41 @@ def test_fetch_as_df(mock_data, mock_description, expected_df, mock_connection, 
 
     price_repo = PriceRepo()
     price_repo.conn = mock_connection
-    results = price_repo.fetch_as_df("select * from query")
+    results = price_repo.fetch("select * from query")
+    assert_frame_equal(expected_df, results)
+
+@pytest.fixture
+def expected_df():
+    return pd.DataFrame(
+        [
+            {
+                "reference_date": Timestamp('2022-05-29 00:00:00'),
+                "symbol": "APL",
+                "reference_price": 2.1
+            },
+            {
+                "reference_date": Timestamp('2022-05-31 00:00:00'),
+                "symbol": "BTA",
+                "reference_price": 3.1
+            }
+        ]
+    )
+
+
+@patch("src.repositories.price_repo.PriceRepo.fetch")
+def test_select_all_data(mock_fetch, mock_eq_price_df, expected_df):
+    mock_fetch.return_value = mock_eq_price_df
+
+    price_repo = PriceRepo()
+    results = price_repo.fetch_all()
+
     assert_frame_equal(expected_df, results)
 
 
-@pytest.mark.parametrize(
-    "mock_df, expected",
-    [
-        (
-            "mock_eq_price_df",
-            [
-                {
-                    "reference_date": Timestamp('2022-05-29 00:00:00'),
-                    "symbol": "APL",
-                    "reference_price": 2.1
-                },
-                {
-                    "reference_date": Timestamp('2022-05-31 00:00:00'),
-                    "symbol": "BTA",
-                    "reference_price": 3.1
-                },
-            ]
-        ),
-        (
-            "mock_empty_df",
-            []
-        )
-
-    ]
-)
-@patch("src.repositories.price_repo.PriceRepo.fetch_as_df")
-def test_select_all_data(mock_fetch_as_df, mock_df, expected, request):
-    mock_price_df = request.getfixturevalue(mock_df)
-    mock_fetch_as_df.return_value = mock_price_df
+@patch("src.repositories.price_repo.PriceRepo.fetch")
+def test_fetch_all_no_data(mock_fetch, mock_empty_df):
+    mock_fetch.return_value = mock_empty_df
 
     price_repo = PriceRepo()
-    results = price_repo.select_all_data("equities")
-
-    assert results == expected
-
-
+    with pytest.raises(RuntimeError):
+        price_repo.fetch_all()
