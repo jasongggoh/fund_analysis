@@ -21,7 +21,16 @@ This takes place upon converting the data extracted to Pydantic modelling for va
 
 Data repositories fetch the data from their sources and return them in the type as annotated. Services string these data repositories operations together and generate the reports.
 
-The main code that executes the application is in `main.py`.
+The main code that executes the application is in `generate_report.py`.
+
+You can generate 2 kinds of reports:
+- price_recon
+- best_perf_by_month
+
+after installing with `uv sync` or `poetry install`, enable the environment. 
+
+run it with `python -m generate_report [report] [output_directory/output_file_name.xlsx]`
+i.e. `python -m generate_report price_recon output/price_recon.xlsx`
 
 ### Modelling
 - External fund data are provided through `.csv` files and are stored within `external-funds` folder.

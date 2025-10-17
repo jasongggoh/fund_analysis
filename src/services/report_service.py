@@ -73,7 +73,6 @@ class ReportGenerator:
 
         #sort for readability
         best_perf_fund_by_month.sort_values(["data_date"])
-        print(best_perf_fund_by_month.to_string())
 
         return best_perf_fund_by_month
 
