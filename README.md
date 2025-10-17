@@ -21,7 +21,7 @@ This takes place upon converting the data extracted to Pydantic modelling for va
 
 Data repositories fetch the data from their sources and return them in the type as annotated. Services string these data repositories operations together and generate the reports.
 
-The main code that executes the application is in `main.py`.
+The main code that executes the application is in `generate_report.py`.
 
 ### Modelling
 - External fund data are provided through `.csv` files and are stored within `external-funds` folder.
